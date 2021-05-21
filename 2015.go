@@ -117,9 +117,9 @@ func Y2015_05(input string) (int, int) {
 		}
 		trigraph_match := false
 		digraph_match := false
-		for i, _ := range n {
+		for i := range n {
 			if i < len(n) - 3 {
-				for j, _ := range n[i+2:] {
+				for j := range n[i+2:] {
 					if j > 0 {
 						if n[i:i+2] == n[j+i+1:j+i+3] {
 							digraph_match = true
