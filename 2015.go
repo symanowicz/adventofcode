@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"regexp"
 	"sort"
-	"strings"
 	"strconv"
+	"strings"
 )
 
 func Y2015_01(input string) (int, int) {
@@ -191,6 +191,36 @@ func Y2015_06(input string) (int, int) {
 	}
 	return lite, brite
 }
+func signalSolve(input string) uint16 {
+	n := strings.Split(input, " ")
+	switch {
+	case strings.Contains(input, "AND"):
+		return signalSolve(signals[n[0]]) & signalSolve(signals[n[2]])
+	case strings.Contains(input, "OR"):
+		return signalSolve(signals[n[0]]) | signalSolve(signals[n[2]])
+	case strings.Contains(input, "NOT"):
+		return -signalSolve(signals[n[1]])
+	case strings.Contains(input, "LSHIFT"):
+		m, _ := strconv.Atoi(n[2])
+		return signalSolve(signals[n[0]]) << m
+	case strings.Contains(input, "RSHIFT"):
+		m, _ := strconv.Atoi(n[2])
+		return signalSolve(signals[n[0]]) >> m
+	default:
+		i, e := strconv.ParseUint(input, 0, 16)
+		if e != nil {
+			return signalSolve(signals[input])
+		} else {
+			return uint16(i)
+		}
+	}
+}
+var signals = make(map[string]string)
 func Y2015_07(input string) (int, int) {
-	return 0, 0
+	for _, n := range strings.Split(input, "\n") {
+		m := strings.Split(n, " -> ")
+		signals[m[1]] = m[0]
+	}
+	// TODO: this currently stack overflows, possible go routine fix?
+	return int(signalSolve(signals["a"])), 0
 }
