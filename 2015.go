@@ -7,6 +7,7 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"sync"
 )
 
 func Y2015_01(input string) (int, int) {
@@ -191,36 +192,45 @@ func Y2015_06(input string) (int, int) {
 	}
 	return lite, brite
 }
-func signalSolve(input string) uint16 {
-	n := strings.Split(input, " ")
-	switch {
-	case strings.Contains(input, "AND"):
-		return signalSolve(signals[n[0]]) & signalSolve(signals[n[2]])
-	case strings.Contains(input, "OR"):
-		return signalSolve(signals[n[0]]) | signalSolve(signals[n[2]])
-	case strings.Contains(input, "NOT"):
-		return -signalSolve(signals[n[1]])
-	case strings.Contains(input, "LSHIFT"):
-		m, _ := strconv.Atoi(n[2])
-		return signalSolve(signals[n[0]]) << m
-	case strings.Contains(input, "RSHIFT"):
-		m, _ := strconv.Atoi(n[2])
-		return signalSolve(signals[n[0]]) >> m
-	default:
-		i, e := strconv.ParseUint(input, 0, 16)
-		if e != nil {
-			return signalSolve(signals[input])
-		} else {
-			return uint16(i)
-		}
-	}
-}
-var signals = make(map[string]string)
 func Y2015_07(input string) (int, int) {
+	signals := make(map[string]string)
 	for _, n := range strings.Split(input, "\n") {
 		m := strings.Split(n, " -> ")
 		signals[m[1]] = m[0]
 	}
-	// TODO: this currently stack overflows, possible go routine fix?
-	return int(signalSolve(signals["a"])), 0
+	solve := func (input string) uint16 {
+		n := strings.Split(input, " ")
+		fmt.Println(input)
+		switch {
+		case strings.Contains(input, "AND"):
+			i, e := strconv.ParseUint(n[0], 0, 16)
+			if e != nil {
+				// TODO: left off here, does not build
+				a := go solve(signals[n[0]])
+				b := go solve(signals[n[2]])
+				return a & b
+			} else {
+				return uint16(i) & solve(signals[n[2]])
+			}
+		case strings.Contains(input, "OR"):
+			return solve(signals[n[0]]) | solve(signals[n[2]])
+		case strings.Contains(input, "NOT"):
+			return -solve(signals[n[1]])
+		case strings.Contains(input, "LSHIFT"):
+			m, _ := strconv.Atoi(n[2])
+			return solve(signals[n[0]]) << m
+		case strings.Contains(input, "RSHIFT"):
+			m, _ := strconv.Atoi(n[2])
+			return solve(signals[n[0]]) >> m
+		default:
+			i, e := strconv.ParseUint(input, 0, 16)
+			if e != nil {
+				return solve(signals[input])
+			} else {
+				return uint16(i)
+			}
+		}
+	}
+	a := solve(signals["a"])
+	return int(a), 0
 }

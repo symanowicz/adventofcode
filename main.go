@@ -12,12 +12,11 @@ type puzzle struct {
 	solution func(string) (int, int)
 }
 
-func (p puzzle) solve() {
-	fmt.Printf("*** %d *** [%d]\n", p.year, p.day)
+func (p puzzle) solve() string {
 	data, err := ioutil.ReadFile(p.input)
 	check(err)
 	a, b := p.solution(string(data))
-	fmt.Printf(p.output, a, b)
+	return fmt.Sprintf("*** %d *** [%d]\n" + p.output, p.year, p.day, a, b)
 }
 
 func check(e error) {
@@ -42,9 +41,9 @@ func main() {
 	flag.Parse()
 	if *fAll {
 		for k := range puzz {
-			puzz[k].solve()
+			fmt.Println(puzz[k].solve())
 		}
 	} else {
-		puzz[*fYear+" "+*fDay].solve()
+		fmt.Println(puzz[*fYear+" "+*fDay].solve())
 	}
 }
