@@ -7,7 +7,6 @@ import (
 	"sort"
 	"strconv"
 	"strings"
-	"sync"
 )
 
 func Y2015_01(input string) (int, int) {
@@ -198,39 +197,45 @@ func Y2015_07(input string) (int, int) {
 		m := strings.Split(n, " -> ")
 		signals[m[1]] = m[0]
 	}
-	solve := func (input string) uint16 {
+	var solve func(string, string) uint16
+	solve = func (input, key string) uint16 {
 		n := strings.Split(input, " ")
-		fmt.Println(input)
+		a := uint16(0)
 		switch {
 		case strings.Contains(input, "AND"):
 			i, e := strconv.ParseUint(n[0], 0, 16)
 			if e != nil {
-				// TODO: left off here, does not build
-				a := go solve(signals[n[0]])
-				b := go solve(signals[n[2]])
-				return a & b
+				a = solve(signals[n[0]], n[0]) & solve(signals[n[2]], n[2])
 			} else {
-				return uint16(i) & solve(signals[n[2]])
+				a = uint16(i) & solve(signals[n[2]], n[2])
 			}
 		case strings.Contains(input, "OR"):
-			return solve(signals[n[0]]) | solve(signals[n[2]])
+			a = solve(signals[n[0]], n[0]) | solve(signals[n[2]], n[2])
 		case strings.Contains(input, "NOT"):
-			return -solve(signals[n[1]])
+			a = 65535 - solve(signals[n[1]], n[1])
 		case strings.Contains(input, "LSHIFT"):
 			m, _ := strconv.Atoi(n[2])
-			return solve(signals[n[0]]) << m
+			a = solve(signals[n[0]], n[0]) << m
 		case strings.Contains(input, "RSHIFT"):
 			m, _ := strconv.Atoi(n[2])
-			return solve(signals[n[0]]) >> m
+			a = solve(signals[n[0]], n[0]) >> m
 		default:
 			i, e := strconv.ParseUint(input, 0, 16)
 			if e != nil {
-				return solve(signals[input])
+				a = solve(signals[input], input)
 			} else {
-				return uint16(i)
+				a = uint16(i)
 			}
 		}
+		signals[key] = strconv.Itoa(int(a))
+		return a
 	}
-	a := solve(signals["a"])
-	return int(a), 0
+	a := solve(signals["a"], "a")
+	for _, n := range strings.Split(input, "\n") {
+		m := strings.Split(n, " -> ")
+		signals[m[1]] = m[0]
+	}
+	signals["b"] = strconv.Itoa(int(a))
+	b := solve(signals["a"], "a")
+	return int(a), int(b)
 }
