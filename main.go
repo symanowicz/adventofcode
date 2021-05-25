@@ -34,6 +34,7 @@ func main() {
 		"2015 5": {2015,5,"2015/5","Nice Strings: %d\nNicer Strings: %d\n",Y2015_05},
 		"2015 6": {2015,6,"2015/6","Lights Lit: %d\nTotal Brightness: %d\n",Y2015_06},
 		"2015 7": {2015,7,"2015/7","Signal a: %d\nSignal a w/b override: %d",Y2015_07},
+		"2015 8": {2015,8,"2015/8","undefined: %d\nundefined: %d",Y2015_08},
 	}
 	fDay := flag.String("day", "1", "which day to solve for")
 	fYear := flag.String("year", "2015", "which year to solve for")

@@ -239,3 +239,6 @@ func Y2015_07(input string) (int, int) {
 	b := solve(signals["a"], "a")
 	return int(a), int(b)
 }
+func Y2015_08(input string) (int, int) {
+	return 0, 0
+}
