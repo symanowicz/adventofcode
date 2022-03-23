@@ -46,6 +46,11 @@ func main() {
 			fmt.Println(puzz[k].solve())
 		}
 	} else {
-		fmt.Println(puzz[*fYear+" "+*fDay].solve())
+		i, prs := puzz[*fYear+" "+*fDay]
+		if prs {
+			fmt.Println(i.solve())
+		} else {
+			fmt.Println("Solution Not Found")
+		}
 	}
 }
