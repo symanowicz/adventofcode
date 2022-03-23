@@ -9,7 +9,7 @@ import (
 type puzzle struct {
 	year, day int
 	input, output string
-	solution func(string) (int, int)
+	solution func(string) (interface{}, interface{})
 }
 
 func (p puzzle) solve() string {
@@ -27,15 +27,21 @@ func check(e error) {
 
 func main() {
 	puzz := map[string]puzzle{
-		"2015 1": {2015,1,"2015/1","End Floor: %d\nEnter Basement at Position: %d\n",Y2015_01},
-		"2015 2": {2015,2,"2015/2","Total Wrapping Paper: %d\nTotal Ribbon: %d\n",Y2015_02},
-		"2015 3": {2015,3,"2015/3","Houses Visited This Year: %d\nHouses Visited Next Year: %d\n",Y2015_03},
-		"2015 4": {2015,4,"2015/4","5 0s: %d\n6 0s: %d\n",Y2015_04},
-		"2015 5": {2015,5,"2015/5","Nice Strings: %d\nNicer Strings: %d\n",Y2015_05},
-		"2015 6": {2015,6,"2015/6","Lights Lit: %d\nTotal Brightness: %d\n",Y2015_06},
-		"2015 7": {2015,7,"2015/7","Signal a: %d\nSignal a w/b override: %d",Y2015_07},
-		"2015 8": {2015,8,"2015/8","undefined: %d\nundefined: %d",Y2015_08},
-		"2018 1": {2018,1,"2018/1","Resulting Frequency: %d\nFirst Repeated Frequency: %d",Y2018_01},
+		"2015 1": {2015,1,"2015/1","End Floor: %v\nEnter Basement at Position: %v\n",Y2015_01},
+		"2015 2": {2015,2,"2015/2","Total Wrapping Paper: %v\nTotal Ribbon: %v\n",Y2015_02},
+		"2015 3": {2015,3,"2015/3","Houses Visited This Year: %v\nHouses Visited Next Year: %v\n",Y2015_03},
+		"2015 4": {2015,4,"2015/4","5 0s: %v\n6 0s: %v\n",Y2015_04},
+		"2015 5": {2015,5,"2015/5","Nice Strings: %v\nNicer Strings: %v\n",Y2015_05},
+		"2015 6": {2015,6,"2015/6","Lights Lit: %v\nTotal Brightness: %v\n",Y2015_06},
+		"2015 7": {2015,7,"2015/7","Signal a: %v\nSignal a w/b override: %v",Y2015_07},
+		"2015 8": {2015,8,"2015/8","undefined: %v\nundefined: %v",Y2015_08},
+		"2018 1": {2018,1,"2018/1","Resulting Frequency: %v\nFirst Repeated Frequency: %v",Y2018_01},
+		"2018 2": {2018,2,"2018/2","Checksum: %v\nCommon Letters: %v",Y2018_02},
+		//"2018 3": {2018,3,"2018/3","Resulting Frequency: %v\nFirst Repeated Frequency: %v",Y2018_03},
+		//"2018 4": {2018,4,"2018/4","Resulting Frequency: %v\nFirst Repeated Frequency: %v",Y2018_04},
+		//"2018 5": {2018,5,"2018/5","Resulting Frequency: %v\nFirst Repeated Frequency: %v",Y2018_05},
+		//"2018 6": {2018,6,"2018/6","Resulting Frequency: %v\nFirst Repeated Frequency: %v",Y2018_06},
+		//"2018 7": {2018,7,"2018/7","Resulting Frequency: %v\nFirst Repeated Frequency: %v",Y2018_07},
 	}
 	fDay := flag.String("day", "1", "which day to solve for")
 	fYear := flag.String("year", "2015", "which year to solve for")

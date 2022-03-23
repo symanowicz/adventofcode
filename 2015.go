@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-func Y2015_01(input string) (int, int) {
+func Y2015_01(input string) (interface{}, interface{}) {
 	stop := strings.Count(input, "(") - strings.Count(input, ")")
 	basement := 0
 	floor := 0
@@ -26,7 +26,7 @@ func Y2015_01(input string) (int, int) {
 	}
 	return stop, basement
 }
-func Y2015_02(input string) (int, int) {
+func Y2015_02(input string) (interface{}, interface{}) {
 	packages := make([][]int, 0)
 	for _, n := range strings.Fields(input) {
 		p := make([]int, 3)
@@ -45,7 +45,7 @@ func Y2015_02(input string) (int, int) {
 	}
 	return paper, ribbon
 }
-func Y2015_03(input string) (int, int) {
+func Y2015_03(input string) (interface{}, interface{}) {
 	homes, next := make(map[string]int), make(map[string]int)
 	x, y, nx, ny, rx, ry := 0, 0, 0, 0, 0, 0
 	homes[strconv.Itoa(x)+" "+strconv.Itoa(y)]++
@@ -91,7 +91,7 @@ func Y2015_03(input string) (int, int) {
 	}
 	return len(homes), len(next)
 }
-func Y2015_04(input string) (int, int) {
+func Y2015_04(input string) (interface{}, interface{}) {
 	i, j := 0, 0
 	s, t := "", ""
 	for i = 0; !(strings.HasPrefix(s, "00000")); i++ {
@@ -102,7 +102,7 @@ func Y2015_04(input string) (int, int) {
 	}
 	return i-1, j-1
 }
-func Y2015_05(input string) (int, int) {
+func Y2015_05(input string) (interface{}, interface{}) {
 	nice := 0
 	nicer := 0
 	good_re := regexp.MustCompile(`(?m)(aa|bb|cc|dd|ee|ff|gg|hh|ii|jj|kk|ll|mm|nn|oo|pp|qq|rr|ss|tt|uu|vv|ww|xx|yy|zz)`)
@@ -139,7 +139,7 @@ func Y2015_05(input string) (int, int) {
 	}
 	return nice, nicer
 }
-func Y2015_06(input string) (int, int) {
+func Y2015_06(input string) (interface{}, interface{}) {
 	lights := make([]bool, 1000000)
 	brights := make([]int, 1000000)
 	for _, n := range strings.Split(input, "\n") {
@@ -191,7 +191,7 @@ func Y2015_06(input string) (int, int) {
 	}
 	return lite, brite
 }
-func Y2015_07(input string) (int, int) {
+func Y2015_07(input string) (interface{}, interface{}) {
 	signals := make(map[string]string)
 	for _, n := range strings.Split(input, "\n") {
 		m := strings.Split(n, " -> ")
@@ -239,6 +239,6 @@ func Y2015_07(input string) (int, int) {
 	b := solve(signals["a"], "a")
 	return int(a), int(b)
 }
-func Y2015_08(input string) (int, int) {
+func Y2015_08(input string) (interface{}, interface{}) {
 	return 0, 0
 }
