@@ -3,8 +3,10 @@ package main
 import (
 	"fmt"
 	"regexp"
+	"sort"
 	"strconv"
 	"strings"
+	"time"
 )
 
 func Y2018_01(input string) (interface{}, interface{}) {
@@ -126,9 +128,134 @@ func Y2018_03(input string) (interface{}, interface{}) {
 			start += 1000
 		}
 		if intact {
-			claim = n.c
+			claim = strings.Fields(n.c)[0][1:]
 			break
 		}
 	}
 	return total, claim
+}
+func Y2018_04(input string) (interface{}, interface{}) {
+	type sleep struct {
+		start time.Time
+		length time.Duration
+	}
+	type guard struct {
+		asleep []sleep
+		total time.Duration
+		minutes map[int]int
+	}
+	//Removes '#' to make id parsing easier, splits input on newline
+	sorted := strings.FieldsFunc(strings.ReplaceAll(input, "#", ""), func(c rune) bool { return c == '\n' })
+	//Sorts by timestamp (easy no?)
+	sort.Strings(sorted)
+	r := regexp.MustCompile(`\[(.*)\] [[:alpha:]]{5} ([[:alnum:]]+).*`)
+	const timeForm = "2006-01-02 15:04"
+	guards := make(map[int]guard)
+	current_id := 0
+	for _, n := range sorted {
+		m := r.FindStringSubmatch(n)
+		switch m[2] {
+		//push new sleep period for current guard
+		case "asleep":
+			t, _ := time.Parse(timeForm, m[1])
+			g := guards[current_id]
+			g.asleep = append(g.asleep, sleep{t, 0})
+			guards[current_id] = g
+		//set length of current sleep period for current guard
+		case "up":
+			t, _ := time.Parse(timeForm, m[1])
+			g := guards[current_id]
+			g.asleep[len(g.asleep) - 1].length = t.Sub(g.asleep[len(g.asleep) - 1].start)
+			g.total += g.asleep[len(g.asleep) - 1].length
+			guards[current_id] = g
+		//guard change, check list if guard exists, otherwise create guard and push to list
+		default:
+			i, _ := strconv.Atoi(m[2])
+			_, prs := guards[i]
+			if prs {
+				current_id = i
+			} else {
+				guards[i] = guard{make([]sleep, 0), 0, make(map[int]int)}
+				current_id = i
+			}
+		}
+	}
+	//count minute occurences
+	for _, v := range guards {
+		for _, s := range v.asleep {
+			for i := s.start.Minute(); i < s.start.Add(s.length).Minute(); i++ {
+				v.minutes[i]++
+			}
+		}
+	}
+	//who was asleep the longest?
+	sleeper, longest := 0, 0
+	for k, v := range guards {
+		if len(v.asleep) != 0 {
+			if int(v.total) > longest {
+				longest = int(v.total)
+				sleeper = k
+			}
+		}
+	}
+	//most likely minute to be sleeping
+	minute, max := 0, 0
+	for k, v := range guards[sleeper].minutes {
+		if v > max {
+			max = v
+			minute = k
+		}
+	}
+	//part 2
+	sleeper2, minute2, max2 := 0, 0, 0
+	for k, v := range guards {
+		if len(v.asleep) != 0 {
+			for l, w := range v.minutes {
+				if w > max2 {
+					sleeper2 = k
+					minute2 = l
+					max2 = w
+				}
+			}
+		}
+	}
+	return sleeper * minute, sleeper2 * minute2
+}
+func Y2018_05(input string) (interface{}, interface{}) {
+	length := 0
+	polymer := input
+	for {
+		length = len(polymer)
+		for _, n := range "abcdefghijklmnopqrstuvwxyz" {
+			polymer = strings.Replace(polymer, string(n)+strings.ToUpper(string(n)), "", -1)
+			polymer = strings.Replace(polymer, strings.ToUpper(string(n))+string(n), "", -1)
+		}
+		if length == len(polymer) {
+			break
+		}
+	}
+	totals := make([]int, 0)
+	for _, m := range "abcdefghijklmnopqrstuvwxyz" {
+		improved := input
+		improved = strings.Replace(improved, string(m), "", -1)
+		improved = strings.Replace(improved, strings.ToUpper(string(m)), "", -1)
+		for {
+			length = len(improved)
+			for _, n := range "abcdefghijklmnopqrstuvwxyz" {
+				improved = strings.Replace(improved, string(n)+strings.ToUpper(string(n)), "", -1)
+				improved = strings.Replace(improved, strings.ToUpper(string(n))+string(n), "", -1)
+			}
+			if length == len(improved) {
+				totals = append(totals, length)
+				break
+			}
+		}
+	}
+	min := 9999
+	for _, n := range totals {
+		if n < min {
+			min = n
+		}
+	}
+	return len(polymer), min
 }

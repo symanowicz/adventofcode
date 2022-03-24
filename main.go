@@ -38,8 +38,8 @@ func main() {
 		"2018 1": {2018,1,"2018/1","Resulting Frequency: %v\nFirst Repeated Frequency: %v",Y2018_01},
 		"2018 2": {2018,2,"2018/2","Checksum: %v\nCommon Letters: %v",Y2018_02},
 		"2018 3": {2018,3,"2018/3","Square Inches Contested: %v\nNon-Overlapping Claim ID: %v",Y2018_03},
-		//"2018 4": {2018,4,"2018/4","Resulting Frequency: %v\nFirst Repeated Frequency: %v",Y2018_04},
-		//"2018 5": {2018,5,"2018/5","Resulting Frequency: %v\nFirst Repeated Frequency: %v",Y2018_05},
+		"2018 4": {2018,4,"2018/4","Most Minutes Asleep: %v\nSleeps The Same Minute: %v",Y2018_04},
+		"2018 5": {2018,5,"2018/5","Polymer Length: %v\nImproved Polymer Length: %v",Y2018_05},
 		//"2018 6": {2018,6,"2018/6","Resulting Frequency: %v\nFirst Repeated Frequency: %v",Y2018_06},
 		//"2018 7": {2018,7,"2018/7","Resulting Frequency: %v\nFirst Repeated Frequency: %v",Y2018_07},
 	}
