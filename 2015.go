@@ -20,7 +20,7 @@ func Y2015_01(input string) (interface{}, interface{}) {
 			floor--
 		}
 		if floor < 0 {
-			basement = i+1
+			basement = i + 1
 			break
 		}
 	}
@@ -40,7 +40,7 @@ func Y2015_02(input string) (interface{}, interface{}) {
 	}
 	paper, ribbon := 0, 0
 	for _, n := range packages {
-		paper += (n[0]*n[1] + n[1]*n[2] + n[2]*n[0])*2 + n[0]*n[1]
+		paper += (n[0]*n[1]+n[1]*n[2]+n[2]*n[0])*2 + n[0]*n[1]
 		ribbon += (n[0]+n[1])*2 + n[0]*n[1]*n[2]
 	}
 	return paper, ribbon
@@ -53,36 +53,36 @@ func Y2015_03(input string) (interface{}, interface{}) {
 	next[strconv.Itoa(rx)+" "+strconv.Itoa(ry)]++
 	for i, n := range input {
 		switch n {
-			case rune('^'):
-			if i % 2 == 0 {
+		case rune('^'):
+			if i%2 == 0 {
 				nx++
 			} else {
 				rx++
 			}
 			x++
-			case rune('v'):
-			if i % 2 == 0 {
+		case rune('v'):
+			if i%2 == 0 {
 				nx--
 			} else {
 				rx--
 			}
 			x--
-			case rune('>'):
-			if i % 2 == 0 {
+		case rune('>'):
+			if i%2 == 0 {
 				ny++
 			} else {
 				ry++
 			}
 			y++
-			case rune('<'):
-			if i % 2 == 0 {
+		case rune('<'):
+			if i%2 == 0 {
 				ny--
 			} else {
 				ry--
 			}
 			y--
 		}
-		if i % 2 == 0 {
+		if i%2 == 0 {
 			next[strconv.Itoa(nx)+" "+strconv.Itoa(ny)]++
 		} else {
 			next[strconv.Itoa(rx)+" "+strconv.Itoa(ry)]++
@@ -100,7 +100,7 @@ func Y2015_04(input string) (interface{}, interface{}) {
 	for j = 0; !(strings.HasPrefix(t, "000000")); j++ {
 		t = fmt.Sprintf("%x", md5.Sum([]byte(input+strconv.Itoa(j))))
 	}
-	return i-1, j-1
+	return i - 1, j - 1
 }
 func Y2015_05(input string) (interface{}, interface{}) {
 	nice := 0
@@ -110,7 +110,7 @@ func Y2015_05(input string) (interface{}, interface{}) {
 	for _, n := range strings.Fields(input) {
 		if !(bad_re.Match([]byte(n))) {
 			if good_re.Match([]byte(n)) {
-				if strings.Count(n, "a") + strings.Count(n, "e") + strings.Count(n, "i") + strings.Count(n, "o") + strings.Count(n, "u") >= 3 {
+				if strings.Count(n, "a")+strings.Count(n, "e")+strings.Count(n, "i")+strings.Count(n, "o")+strings.Count(n, "u") >= 3 {
 					nice++
 				}
 			}
@@ -118,7 +118,7 @@ func Y2015_05(input string) (interface{}, interface{}) {
 		trigraph_match := false
 		digraph_match := false
 		for i := range n {
-			if i < len(n) - 3 {
+			if i < len(n)-3 {
 				for j := range n[i+2:] {
 					if j > 0 {
 						if n[i:i+2] == n[j+i+1:j+i+3] {
@@ -127,8 +127,8 @@ func Y2015_05(input string) (interface{}, interface{}) {
 					}
 				}
 			}
-			if i < len(n) - 2 {
-				if n[i:i+3][0] == n[i:i+3][2] {
+			if i < len(n)-2 {
+				if n[i : i+3][0] == n[i : i+3][2] {
 					trigraph_match = true
 				}
 			}
@@ -198,7 +198,7 @@ func Y2015_07(input string) (interface{}, interface{}) {
 		signals[m[1]] = m[0]
 	}
 	var solve func(string, string) uint16
-	solve = func (input, key string) uint16 {
+	solve = func(input, key string) uint16 {
 		n := strings.Split(input, " ")
 		a := uint16(0)
 		switch {
@@ -239,6 +239,7 @@ func Y2015_07(input string) (interface{}, interface{}) {
 	b := solve(signals["a"], "a")
 	return int(a), int(b)
 }
-func Y2015_08(input string) (interface{}, interface{}) {
-	return 0, 0
-}
+
+// func Y2015_08(input string) (interface{}, interface{}) {
+// 	return 0, 0
+// }

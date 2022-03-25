@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"regexp"
 	"sort"
 	"strconv"
@@ -75,7 +76,7 @@ func Y2018_02(input string) (interface{}, interface{}) {
 }
 func Y2018_03(input string) (interface{}, interface{}) {
 	type order struct {
-		c string
+		c          string
 		x, y, w, h int
 	}
 
@@ -96,14 +97,14 @@ func Y2018_03(input string) (interface{}, interface{}) {
 		fabric[i] = '.'
 	}
 	for _, n := range orders {
-		start := n.x + n.y * 1000
+		start := n.x + n.y*1000
 		for i := 0; i < n.h; i++ {
 			for j := 0; j < n.w; j++ {
-				switch fabric[start + j] {
+				switch fabric[start+j] {
 				case '.':
-					fabric[start + j] = 'O'
+					fabric[start+j] = 'O'
 				case 'O':
-					fabric[start + j] = 'X'
+					fabric[start+j] = 'X'
 				}
 			}
 			start += 1000
@@ -118,10 +119,10 @@ func Y2018_03(input string) (interface{}, interface{}) {
 	claim := ""
 	for _, n := range orders {
 		intact := true
-		start := n.x + n.y * 1000
+		start := n.x + n.y*1000
 		for i := 0; i < n.h; i++ {
 			for j := 0; j < n.w; j++ {
-				if fabric[start + j] == 'X' {
+				if fabric[start+j] == 'X' {
 					intact = false
 				}
 			}
@@ -136,12 +137,12 @@ func Y2018_03(input string) (interface{}, interface{}) {
 }
 func Y2018_04(input string) (interface{}, interface{}) {
 	type sleep struct {
-		start time.Time
+		start  time.Time
 		length time.Duration
 	}
 	type guard struct {
-		asleep []sleep
-		total time.Duration
+		asleep  []sleep
+		total   time.Duration
 		minutes map[int]int
 	}
 	//Removes '#' to make id parsing easier, splits input on newline
@@ -165,8 +166,8 @@ func Y2018_04(input string) (interface{}, interface{}) {
 		case "up":
 			t, _ := time.Parse(timeForm, m[1])
 			g := guards[current_id]
-			g.asleep[len(g.asleep) - 1].length = t.Sub(g.asleep[len(g.asleep) - 1].start)
-			g.total += g.asleep[len(g.asleep) - 1].length
+			g.asleep[len(g.asleep)-1].length = t.Sub(g.asleep[len(g.asleep)-1].start)
+			g.total += g.asleep[len(g.asleep)-1].length
 			guards[current_id] = g
 		//guard change, check list if guard exists, otherwise create guard and push to list
 		default:
@@ -258,4 +259,194 @@ func Y2018_05(input string) (interface{}, interface{}) {
 		}
 	}
 	return len(polymer), min
+}
+
+//this function can be shorted by using a field struct to contain edge, marker, safe
+func Y2018_06(input string) (interface{}, interface{}) {
+	type point struct {
+		x, y int
+	}
+	p := make([]point, 0)
+	for _, n := range strings.FieldsFunc(input, func(c rune) bool { return c == '\n' }) {
+		s := strings.Split(n, ", ")
+		x, _ := strconv.Atoi(s[0])
+		y, _ := strconv.Atoi(s[1])
+		p = append(p, point{x, y})
+	}
+	field := make([]rune, 160000)
+	marker := "abcdefghijklmnopqrstuvwxyABCDEFGHIJKLMNOPQRSTUVWXY"
+
+	for i := range field {
+		x := i % 400
+		y := i / 400
+		closest := 999999
+		for j, m := range p {
+			dist := int(math.Abs(float64(x-m.x)) + math.Abs(float64(y-m.y)))
+			if dist < closest {
+				field[i] = rune(marker[j])
+				closest = dist
+			} else if dist == closest {
+				field[i] = '.'
+			}
+		}
+	}
+	m := make(map[rune]int)
+	for _, n := range marker {
+		m[n] = 0
+	}
+	for _, n := range field {
+		m[n]++
+	}
+	for i, n := range field {
+		x := i % 400
+		y := i / 400
+		if x == 0 || x == 399 {
+			delete(m, n)
+		}
+		if y == 0 || y == 399 {
+			delete(m, n)
+		}
+	}
+	max := 0
+	for _, v := range m {
+		if v > max {
+			max = v
+		}
+	}
+	//part 2
+	for i := range field {
+		x := i % 400
+		y := i / 400
+		dist := make([]int, 0)
+		sum := 0
+		for _, m := range p {
+			dist = append(dist, int(math.Abs(float64(x-m.x))+math.Abs(float64(y-m.y))))
+		}
+		for _, n := range dist {
+			sum += n
+		}
+		if sum < 10000 {
+			field[i] = '#'
+		}
+	}
+	safe := 0
+	for _, n := range field {
+		if n == '#' {
+			safe++
+		}
+	}
+	return max, safe
+}
+
+//find better way to duplicate the map struct?
+func Y2018_07(input string) (interface{}, interface{}) {
+	type step struct {
+		prereqs             []string
+		available, assigned bool
+		time                int
+	}
+	steps := make(map[string]*step)
+	steps2 := make(map[string]*step)
+	for i, n := range "ABCDEFGHIJKLMNOPQRSTUVWXYZ" {
+		steps[string(n)] = new(step)
+		steps[string(n)].available = true
+		steps[string(n)].assigned = false
+		steps[string(n)].time = 60 + i
+		steps2[string(n)] = new(step)
+		steps2[string(n)].available = true
+		steps2[string(n)].assigned = false
+		steps2[string(n)].time = 60 + i
+	}
+	r := regexp.MustCompile(`.* ([A-Z]){1} .* ([A-Z]){1} .*`)
+	for _, n := range strings.FieldsFunc(input, func(c rune) bool { return c == '\n' }) {
+		m := r.FindStringSubmatch(n)
+		for k := range steps {
+			if m[2] == k {
+				steps[k].prereqs = append(steps[k].prereqs, m[1])
+				steps[k].available = false
+				break
+			}
+		}
+		for k := range steps2 {
+			if m[2] == k {
+				steps2[k].prereqs = append(steps2[k].prereqs, m[1])
+				steps2[k].available = false
+				break
+			}
+		}
+	}
+	order := ""
+	for {
+		done := true
+		for _, n := range "ABCDEFGHIJKLMNOPQRSTUVWXYZ" {
+			if _, p := steps[string(n)]; p {
+				if !steps[string(n)].available {
+					p_done := true
+					for _, m := range steps[string(n)].prereqs {
+						if _, p2 := steps[m]; p2 {
+							p_done = false
+						}
+					}
+					if p_done {
+						steps[string(n)].available = true
+					}
+					done = false
+				}
+				if steps[string(n)].available {
+					order += string(n)
+					delete(steps, string(n))
+					break
+				}
+			}
+		}
+		if done {
+			break
+		}
+	}
+	timer := 0
+	order2 := ""
+	elfs := make([]string, 5)
+	for {
+		done := true
+		for i := range elfs {
+			if elfs[i] != "" {
+				if steps2[elfs[i]].time == 0 {
+					order2 += elfs[i]
+					delete(steps2, elfs[i])
+					elfs[i] = ""
+				} else {
+					steps2[elfs[i]].time--
+					done = false
+				}
+			}
+			if elfs[i] == "" {
+				for _, n := range "ABCDEFGHIJKLMNOPQRSTUVWXYZ" {
+					if _, p := steps2[string(n)]; p {
+						if !steps2[string(n)].available {
+							p_done := true
+							for _, m := range steps2[string(n)].prereqs {
+								if _, p2 := steps2[m]; p2 {
+									p_done = false
+								}
+							}
+							if p_done {
+								steps2[string(n)].available = true
+							}
+							done = false
+						}
+						if steps2[string(n)].available && !steps2[string(n)].assigned {
+							elfs[i] = string(n)
+							steps2[string(n)].assigned = true
+							break
+						}
+					}
+				}
+			}
+		}
+		if done {
+			break
+		}
+		timer++
+	}
+	return order, timer
 }
