@@ -7,6 +7,7 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"unicode/utf8"
 )
 
 func Y2015_01(input string) (interface{}, interface{}) {
@@ -239,7 +240,13 @@ func Y2015_07(input string) (interface{}, interface{}) {
 	b := solve(signals["a"], "a")
 	return int(a), int(b)
 }
-
-// func Y2015_08(input string) (interface{}, interface{}) {
-// 	return 0, 0
-// }
+func Y2015_08(input string) (interface{}, interface{}) {
+	code, mem, requote := 0, 0, 0
+	for _, n := range strings.Split(input, "\n") {
+		code += utf8.RuneCountInString(n)
+		s, _ := strconv.Unquote(n)
+		mem += utf8.RuneCountInString(s)
+		requote += utf8.RuneCountInString(strconv.Quote(n))
+	}
+	return code-mem, requote-code
+}

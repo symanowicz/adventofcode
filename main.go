@@ -34,7 +34,7 @@ func main() {
 		"2015 5": {2015, 5, "2015/5", "Nice Strings: %v\nNicer Strings: %v\n", Y2015_05},
 		"2015 6": {2015, 6, "2015/6", "Lights Lit: %v\nTotal Brightness: %v\n", Y2015_06},
 		"2015 7": {2015, 7, "2015/7", "Signal a: %v\nSignal a w/b override: %v\n", Y2015_07},
-		//"2015 8": {2015, 8, "2015/8", "undefined: %v\nundefined: %v\n", Y2015_08},
+		"2015 8": {2015, 8, "2015/8", "Difference: %v\nRequote Difference: %v\n", Y2015_08},
 		"2018 1": {2018, 1, "2018/1", "Resulting Frequency: %v\nFirst Repeated Frequency: %v\n", Y2018_01},
 		"2018 2": {2018, 2, "2018/2", "Checksum: %v\nCommon Letters: %v\n", Y2018_02},
 		"2018 3": {2018, 3, "2018/3", "Square Inches Contested: %v\nNon-Overlapping Claim ID: %v\n", Y2018_03},
