@@ -248,5 +248,68 @@ func Y2015_08(input string) (interface{}, interface{}) {
 		mem += utf8.RuneCountInString(s)
 		requote += utf8.RuneCountInString(strconv.Quote(n))
 	}
-	return code-mem, requote-code
+	return code - mem, requote - code
+}
+func Y2015_09(input string) (interface{}, interface{}) {
+	type path struct {
+		from, to string
+		distance int
+	}
+	permutations := func(arr []int) [][]int {
+		var helper func([]int, int)
+		res := [][]int{}
+
+		helper = func(arr []int, n int) {
+			if n == 1 {
+				tmp := make([]int, len(arr))
+				copy(tmp, arr)
+				res = append(res, tmp)
+			} else {
+				for i := 0; i < n; i++ {
+					helper(arr, n-1)
+					if n%2 == 1 {
+						tmp := arr[i]
+						arr[i] = arr[n-1]
+						arr[n-1] = tmp
+					} else {
+						tmp := arr[0]
+						arr[0] = arr[n-1]
+						arr[n-1] = tmp
+					}
+				}
+			}
+		}
+		helper(arr, len(arr))
+		return res
+	}
+	paths := make([]path, 0)
+	locs := ""
+	for _, n := range strings.Split(input, "\n") {
+		m := strings.Split(n, " = ")
+		o := strings.Split(m[0], " to ")
+		p, _ := strconv.Atoi(m[1])
+		paths = append(paths, path{o[0], o[1], p})
+		if !strings.Contains(locs, o[0]) {
+			locs += o[0] + ","
+		}
+		if !strings.Contains(locs, o[1]) {
+			locs += o[1] + ","
+		}
+	}
+	slocs := strings.Split(locs[:len(locs)-1], ",")
+	distance := []int{}
+	for _, n := range permutations([]int{0, 1, 2, 3, 4, 5, 6, 7}) {
+		acc := 0
+		for j := 0; j < len(n)-1; j++ {
+			for _, m := range paths {
+				if (slocs[n[j]] == m.from && slocs[n[j+1]] == m.to) || (slocs[n[j]] == m.to && slocs[n[j+1]] == m.from) {
+					acc += m.distance
+					break
+				}
+			}
+		}
+		distance = append(distance, acc)
+	}
+	sort.Ints(distance)
+	return distance[0], distance[len(distance)-1]
 }
