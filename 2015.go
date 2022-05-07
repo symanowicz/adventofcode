@@ -313,3 +313,29 @@ func Y2015_09(input string) (interface{}, interface{}) {
 	sort.Ints(distance)
 	return distance[0], distance[len(distance)-1]
 }
+func Y2015_10(input string) (interface{}, interface{}) {
+	lss := func(s string) (r string) {
+		c := s[0]
+		nc := 1
+		for i := 1; i < len(s); i++ {
+			d := s[i]
+			if d == c {
+				nc++
+				continue
+			}
+			r += strconv.Itoa(nc) + string(c)
+			c = d
+			nc = 1
+		}
+		return r + strconv.Itoa(nc) + string(c)
+	}
+	forty := 0
+	//this takes a long time (~30 mins)
+	for i := 0; i < 50; i++ {
+		if i == 40 {
+			forty = utf8.RuneCountInString(input)
+		}
+		input = lss(input)
+	}
+	return forty, utf8.RuneCountInString(input)
+}
