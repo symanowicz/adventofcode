@@ -12,8 +12,7 @@ import (
 
 func Y2015_01(input string) (interface{}, interface{}) {
 	stop := strings.Count(input, "(") - strings.Count(input, ")")
-	basement := 0
-	floor := 0
+	basement, floor := 0, 0
 	for i, n := range input {
 		if n == rune('(') {
 			floor++
@@ -330,7 +329,7 @@ func Y2015_10(input string) (interface{}, interface{}) {
 		return r + strconv.Itoa(nc) + string(c)
 	}
 	forty := 0
-	//this takes a long time (~30 mins)
+	//this takes a long time (~30 mins), problem text implies that there's a way to split the problem space
 	for i := 0; i < 50; i++ {
 		if i == 40 {
 			forty = utf8.RuneCountInString(input)
@@ -338,4 +337,69 @@ func Y2015_10(input string) (interface{}, interface{}) {
 		input = lss(input)
 	}
 	return forty, utf8.RuneCountInString(input)
+}
+func Y2015_11(input string) (interface{}, interface{}) {
+	pass := []rune(input)
+	reverse := func (s []rune) {
+		for i := 0; i < 4; i++ {
+			s[i], s[7-i] = s[7-i], s[i]
+		}
+	}
+	var increment func([]rune)
+	increment = func (s []rune) {
+		for i, n := range s {
+			if n == 'z' {
+				s[i] = 'a'
+				increment(s[1:])
+				break
+			} else {
+				s[i]++
+				break
+			}
+		}
+	}
+	double := func (s []rune) bool {
+		found := false
+		for i := 0; i < len(s)-1; i++ {
+			a,b := i,i+1
+			if s[a] == s[b] {
+				for j := 0; j < len(s)-1; j++ {
+					c,d := j,j+1
+					if s[c] == s[d] && !(c == a || c == b || d == a || d == b ) {
+						found = true
+						break
+					}
+				}
+				if found {
+					break
+				}
+			}
+		}
+		return found
+	}
+	straight := func (s []rune) bool {
+		found := false
+		for i := 0; i < len(s)-2; i++ {
+			if s[i]+1 == s[i+1] && s[i+1]+1 == s[i+2] {
+				found = true
+			}
+		}
+		return found
+	}
+	first, firstpass := true, ""
+	for {
+		reverse(pass)
+		increment(pass)
+		reverse(pass)
+		if strings.ContainsAny(string(pass), "iol") || !straight(pass) || !double(pass) {
+			continue
+		}
+		if first {
+			firstpass = string(pass)
+			first = false
+			continue
+		}
+		break
+	}
+	return firstpass,string(pass)
 }

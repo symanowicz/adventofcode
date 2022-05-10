@@ -37,6 +37,7 @@ func main() {
 		"2015 8":  {2015, 8, "2015/8", "Difference: %v\nRequote Difference: %v\n", Y2015_08},
 		"2015 9":  {2015, 9, "2015/9", "Shortest Route: %v\nLongest Route: %v\n", Y2015_09},
 		"2015 10": {2015, 10, "2015/10", "40x Length: %v\n50x Length: %v\n", Y2015_10},
+		"2015 11": {2015, 11, "2015/11", "Next Password: %v\nNexter Password: %v\n", Y2015_11},
 		"2018 1":  {2018, 1, "2018/1", "Resulting Frequency: %v\nFirst Repeated Frequency: %v\n", Y2018_01},
 		"2018 2":  {2018, 2, "2018/2", "Checksum: %v\nCommon Letters: %v\n", Y2018_02},
 		"2018 3":  {2018, 3, "2018/3", "Square Inches Contested: %v\nNon-Overlapping Claim ID: %v\n", Y2018_03},
