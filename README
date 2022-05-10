@@ -1,0 +1,12 @@
+These are my solutions to the Advent Of Code challenges.
+
+# Getting
+Clone this repo
+
+# Installing
+`go build`
+
+# Using
+`$ ./advent -day $DAY -year $YEAR`
+or
+`$ ./advent -all`
