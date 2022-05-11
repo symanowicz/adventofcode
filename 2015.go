@@ -2,6 +2,7 @@ package main
 
 import (
 	"crypto/md5"
+	"encoding/json"
 	"fmt"
 	"regexp"
 	"sort"
@@ -340,13 +341,13 @@ func Y2015_10(input string) (interface{}, interface{}) {
 }
 func Y2015_11(input string) (interface{}, interface{}) {
 	pass := []rune(input)
-	reverse := func (s []rune) {
+	reverse := func(s []rune) {
 		for i := 0; i < 4; i++ {
 			s[i], s[7-i] = s[7-i], s[i]
 		}
 	}
 	var increment func([]rune)
-	increment = func (s []rune) {
+	increment = func(s []rune) {
 		for i, n := range s {
 			if n == 'z' {
 				s[i] = 'a'
@@ -358,14 +359,14 @@ func Y2015_11(input string) (interface{}, interface{}) {
 			}
 		}
 	}
-	double := func (s []rune) bool {
+	double := func(s []rune) bool {
 		found := false
 		for i := 0; i < len(s)-1; i++ {
-			a,b := i,i+1
+			a, b := i, i+1
 			if s[a] == s[b] {
 				for j := 0; j < len(s)-1; j++ {
-					c,d := j,j+1
-					if s[c] == s[d] && !(c == a || c == b || d == a || d == b ) {
+					c, d := j, j+1
+					if s[c] == s[d] && !(c == a || c == b || d == a || d == b) {
 						found = true
 						break
 					}
@@ -377,7 +378,7 @@ func Y2015_11(input string) (interface{}, interface{}) {
 		}
 		return found
 	}
-	straight := func (s []rune) bool {
+	straight := func(s []rune) bool {
 		found := false
 		for i := 0; i < len(s)-2; i++ {
 			if s[i]+1 == s[i+1] && s[i+1]+1 == s[i+2] {
@@ -401,5 +402,48 @@ func Y2015_11(input string) (interface{}, interface{}) {
 		}
 		break
 	}
-	return firstpass,string(pass)
+	return firstpass, string(pass)
+}
+
+func Y2015_12(input string) (interface{}, interface{}) {
+	sum := 0
+	nored := false
+	var parse func(interface{})
+	parse = func(data interface{}) {
+		switch data.(type) {
+		case []interface{}:
+			for _, n := range data.([]interface{}) {
+				parse(n)
+			}
+		case map[string]interface{}:
+			safe := true
+			if nored {
+				for k := range data.(map[string]interface{}) {
+					switch data.(map[string]interface{})[k].(type) {
+					case string:
+						if data.(map[string]interface{})[k].(string) == "red" {
+							safe = false
+						}
+					}
+				}
+			}
+			if safe {
+				for _, v := range data.(map[string]interface{}) {
+					parse(v)
+				}
+			}
+		case float64:
+			sum += int(data.(float64))
+		}
+	}
+	var data interface{}
+	if err := json.Unmarshal([]byte(input), &data); err != nil {
+		panic(err)
+	}
+	parse(data)
+	oldsum := sum
+	sum = 0
+	nored = true
+	parse(data)
+	return oldsum, sum
 }
