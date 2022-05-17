@@ -404,36 +404,35 @@ func Y2015_11(input string) (interface{}, interface{}) {
 	}
 	return firstpass, string(pass)
 }
-
 func Y2015_12(input string) (interface{}, interface{}) {
 	sum := 0
 	nored := false
 	var parse func(interface{})
 	parse = func(data interface{}) {
-		switch data.(type) {
+		switch data := data.(type) {
 		case []interface{}:
-			for _, n := range data.([]interface{}) {
+			for _, n := range data {
 				parse(n)
 			}
 		case map[string]interface{}:
 			safe := true
 			if nored {
-				for k := range data.(map[string]interface{}) {
-					switch data.(map[string]interface{})[k].(type) {
+				for k := range data {
+					switch data[k].(type) {
 					case string:
-						if data.(map[string]interface{})[k].(string) == "red" {
+						if data[k].(string) == "red" {
 							safe = false
 						}
 					}
 				}
 			}
 			if safe {
-				for _, v := range data.(map[string]interface{}) {
+				for _, v := range data {
 					parse(v)
 				}
 			}
 		case float64:
-			sum += int(data.(float64))
+			sum += int(data)
 		}
 	}
 	var data interface{}
@@ -446,4 +445,94 @@ func Y2015_12(input string) (interface{}, interface{}) {
 	nored = true
 	parse(data)
 	return oldsum, sum
+}
+func Y2015_13(input string) (interface{}, interface{}) {
+	permutations := func(arr []int) [][]int {
+		var helper func([]int, int)
+		res := [][]int{}
+
+		helper = func(arr []int, n int) {
+			if n == 1 {
+				tmp := make([]int, len(arr))
+				copy(tmp, arr)
+				res = append(res, tmp)
+			} else {
+				for i := 0; i < n; i++ {
+					helper(arr, n-1)
+					if n%2 == 1 {
+						tmp := arr[i]
+						arr[i] = arr[n-1]
+						arr[n-1] = tmp
+					} else {
+						tmp := arr[0]
+						arr[0] = arr[n-1]
+						arr[n-1] = tmp
+					}
+				}
+			}
+		}
+		helper(arr, len(arr))
+		return res
+	}
+	feels := make(map[string]map[string]int, 0)
+	names := []string{}
+	for _, n := range strings.Split(input, "\n") {
+		s := strings.Split(strings.ReplaceAll(n, ".", ""), " ")
+		strength, _ := strconv.Atoi(s[3])
+		if s[2] == "lose" {
+			strength *= -1
+		}
+		if feels[s[0]] == nil {
+			feels[s[0]] = make(map[string]int, 0)
+			names = append(names, s[0])
+		}
+		feels[s[0]][s[10]] = strength
+	}
+	relations := make(map[string]int, 0)
+	for k, v := range feels {
+		for k2, v2 := range v {
+			if _, prs := relations[k2+":"+k]; !prs {
+				relations[k+":"+k2] = v2 + feels[k2][k]
+			}
+		}
+	}
+	for k, v := range relations {
+		s := strings.Split(k, ":")
+		feels[s[0]][s[1]] = v
+		feels[s[1]][s[0]] = v
+	}
+	arrange := []int{}
+	for _, n := range permutations([]int{0, 1, 2, 3, 4, 5, 6, 7}) {
+		acc := 0
+		for j := 0; j <= len(n)-1; j++ {
+			if j == 7 {
+				acc += feels[names[n[j]]][names[n[0]]]
+			} else {
+				acc += feels[names[n[j]]][names[n[j+1]]]
+			}
+		}
+		arrange = append(arrange, acc)
+	}
+	sort.Ints(arrange)
+	//part 2
+	feels["Me"] = make(map[string]int, 0)
+	for _, n := range names {
+		feels["Me"][n] = 0
+		feels[n]["Me"] = 0
+	}
+	names = append(names, "Me")
+	arrange2 := []int{}
+	for _, n := range permutations([]int{0, 1, 2, 3, 4, 5, 6, 7, 8}) {
+		acc := 0
+		for j := 0; j <= len(n)-1; j++ {
+			if j == 8 {
+				acc += feels[names[n[j]]][names[n[0]]]
+			} else {
+				acc += feels[names[n[j]]][names[n[j+1]]]
+			}
+		}
+		arrange2 = append(arrange2, acc)
+	}
+	sort.Ints(arrange2)
+	return arrange[len(arrange)-1], arrange2[len(arrange2)-1]
 }
