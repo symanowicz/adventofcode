@@ -536,3 +536,79 @@ func Y2015_13(input string) (interface{}, interface{}) {
 	sort.Ints(arrange2)
 	return arrange[len(arrange)-1], arrange2[len(arrange2)-1]
 }
+func Y2015_14(input string) (interface{}, interface{}) {
+	type reindeer struct {
+		name string
+		speed, endurance, rest int
+	}
+	type timer struct {
+		distance, run_time, rest_time, points int
+		resting bool
+	}
+	deers := []reindeer{}
+	race := make(map[string]timer, 0)
+	for _, n := range strings.Split(input, "\n") {
+		parse := strings.Split(n, " ")
+		speed, _ := strconv.Atoi(parse[3])
+		endurance, _ := strconv.Atoi(parse[6])
+		rest, _ := strconv.Atoi(parse[13])
+		deers = append(deers, reindeer{parse[0], speed, endurance, rest})
+		race[parse[0]] = timer{0,endurance,0,0, false}
+	}
+	// deers = append(deers, []reindeer{{"Comet", 14, 10, 127},{"Dancer", 16, 11, 162}}...)
+	// race["Comet"] = timer{0,10,0,0,false}
+	// race["Dancer"] = timer{0,11,0,0,false}
+	for i := 1; i <= 2503; i++ {
+		for _, n := range deers {
+			entry := race[n.name]
+			if entry.resting {
+				entry.rest_time--
+				if entry.rest_time == 0 {
+					entry.resting = false
+					entry.run_time = n.endurance
+				}
+			} else {
+				entry.distance += n.speed
+				entry.run_time--
+				if entry.run_time == 0 {
+					entry.resting = true
+					entry.rest_time = n.rest
+				}
+			}
+			race[n.name] = entry
+		}
+		winning := []string{}
+		for k := range race {
+			if len(winning) == 0 {
+				winning = append(winning, k)
+				continue
+			}
+			if race[k].distance > race[winning[0]].distance {
+				temp := []string{k}
+				winning = temp
+			} else {
+				if race[k].distance == race[winning[0]].distance {
+					winning = append(winning, k)
+				}
+			}
+		}
+		// fmt.Printf("%v\t", winning)
+		for _, n := range winning {
+			entry := race[n]
+			entry.points++
+			race[n] = entry
+		}
+		// fmt.Printf("%04d:%v\n",i,race)
+	}
+	win, pointswin := 0, 0
+	for k := range race {
+		if race[k].distance > win {
+			win = race[k].distance
+		}
+		if race[k].points > pointswin {
+			pointswin = race[k].points
+		}
+		fmt.Printf("%s\t%d\n", k, race[k].points)
+	}
+	return win,pointswin
+}
