@@ -538,12 +538,12 @@ func Y2015_13(input string) (interface{}, interface{}) {
 }
 func Y2015_14(input string) (interface{}, interface{}) {
 	type reindeer struct {
-		name string
+		name                   string
 		speed, endurance, rest int
 	}
 	type timer struct {
 		distance, run_time, rest_time, points int
-		resting bool
+		resting                               bool
 	}
 	deers := []reindeer{}
 	race := make(map[string]timer, 0)
@@ -553,7 +553,7 @@ func Y2015_14(input string) (interface{}, interface{}) {
 		endurance, _ := strconv.Atoi(parse[6])
 		rest, _ := strconv.Atoi(parse[13])
 		deers = append(deers, reindeer{parse[0], speed, endurance, rest})
-		race[parse[0]] = timer{0,endurance,0,0, false}
+		race[parse[0]] = timer{0, endurance, 0, 0, false}
 	}
 	// deers = append(deers, []reindeer{{"Comet", 14, 10, 127},{"Dancer", 16, 11, 162}}...)
 	// race["Comet"] = timer{0,10,0,0,false}
@@ -610,5 +610,5 @@ func Y2015_14(input string) (interface{}, interface{}) {
 		}
 		fmt.Printf("%s\t%d\n", k, race[k].points)
 	}
-	return win,pointswin
+	return win, pointswin
 }

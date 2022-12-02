@@ -261,7 +261,7 @@ func Y2018_05(input string) (interface{}, interface{}) {
 	return len(polymer), min
 }
 
-//this function can be shorted by using a field struct to contain edge, marker, safe
+// this function can be shorted by using a field struct to contain edge, marker, safe
 func Y2018_06(input string) (interface{}, interface{}) {
 	type point struct {
 		x, y int
@@ -338,7 +338,7 @@ func Y2018_06(input string) (interface{}, interface{}) {
 	return max, safe
 }
 
-//find better way to duplicate the map struct?
+// find better way to duplicate the map struct?
 func Y2018_07(input string) (interface{}, interface{}) {
 	type step struct {
 		prereqs             []string

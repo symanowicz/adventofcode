@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
-	"io/ioutil"
+	"os"
 )
 
 type puzzle struct {
@@ -13,7 +13,7 @@ type puzzle struct {
 }
 
 func (p puzzle) solve() string {
-	data, err := ioutil.ReadFile(p.input)
+	data, err := os.ReadFile(p.input)
 	check(err)
 	a, b := p.solution(string(data))
 	return fmt.Sprintf("*** %d *** [%d]\n"+p.output, p.year, p.day, a, b)
@@ -48,6 +48,7 @@ func main() {
 		"2018 5":  {2018, 5, "2018/5", "Polymer Length: %v\nImproved Polymer Length: %v\n", Y2018_05},
 		"2018 6":  {2018, 6, "2018/6", "Largest area: %v\nMost Populous: %v\n", Y2018_06},
 		"2018 7":  {2018, 7, "2018/7", "Instruction Order: %v\nTime to Complete: %v\n", Y2018_07},
+		"2022 1":  {2022, 1, "2022/1", "Most Calories: %v\nTop Three: %v\n", Y2022_01},
 	}
 	fDay := flag.String("day", "1", "which day to solve for")
 	fYear := flag.String("year", "2015", "which year to solve for")
