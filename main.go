@@ -50,6 +50,7 @@ func main() {
 		"2018 7":  {2018, 7, "2018/7", "Instruction Order: %v\nTime to Complete: %v\n", Y2018_07},
 		"2022 1":  {2022, 1, "2022/1", "Most Calories: %v\nTop Three: %v\n", Y2022_01},
 		"2022 2":  {2022, 2, "2022/2", "Total Score: %v\nCorrect Total Score: %v\n", Y2022_02},
+		"2022 3":  {2022, 3, "2022/3", "Sum of Duplicates: %v\nSum of Badges: %v\n", Y2022_03},
 	}
 	fDay := flag.String("day", "1", "which day to solve for")
 	fYear := flag.String("year", "2015", "which year to solve for")
