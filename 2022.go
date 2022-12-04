@@ -1,9 +1,11 @@
 package main
 
 import (
+//	"fmt"
 	"sort"
 	"strconv"
 	"strings"
+	"golang.org/x/exp/slices"
 )
 
 func Y2022_01(input string) (interface{}, interface{}) {
@@ -75,4 +77,55 @@ func Y2022_03(input string) (interface{}, interface{}) {
 		}
 	}
 	return sumDupes, sumBadges
+}
+func Y2022_04(input string) (interface{}, interface{}) {
+	totalContained, anyOverlap := 0, 0
+	for _, n := range strings.Fields(input) {
+		a := strings.Split(n, ",")
+		b1 := strings.Split(a[0], "-")
+		b2 := strings.Split(a[1], "-")
+		c1, _ := strconv.Atoi(b1[0])
+		c2, _ := strconv.Atoi(b1[1])
+		c3, _ := strconv.Atoi(b2[0])
+		c4, _ := strconv.Atoi(b2[1])
+		elf1 := make([]int, 0)
+		elf2 := make([]int, 0)
+		for i := c1; i <= c2; i++ {
+			elf1 = append(elf1, i)
+		}
+		for i := c3; i <= c4; i++ {
+			elf2 = append(elf2, i)
+		}
+		for _, m := range elf1 {
+			if slices.Contains(elf2, m){
+				anyOverlap++
+				break
+			}
+		}
+		fullyContained := false
+		for _, m := range elf1 {
+			if !slices.Contains(elf2, m) {
+				fullyContained = false
+				break
+			}
+			//fmt.Printf("%v %v\n", elf1, elf2)
+			fullyContained = true
+		}
+		if fullyContained {
+			totalContained++
+			continue
+		}
+		for _, m := range elf2 {
+			if !slices.Contains(elf1, m) {
+				fullyContained = false
+				break
+			}
+			//fmt.Printf("%v %v\n",elf1,elf2)
+			fullyContained = true
+		}
+		if fullyContained {
+			totalContained++
+		}
+	}
+	return totalContained,anyOverlap
 }
