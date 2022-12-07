@@ -1,10 +1,11 @@
 package main
 
 import (
-//	"fmt"
+	"fmt"
 	"sort"
 	"strconv"
 	"strings"
+
 	"golang.org/x/exp/slices"
 )
 
@@ -97,7 +98,7 @@ func Y2022_04(input string) (interface{}, interface{}) {
 			elf2 = append(elf2, i)
 		}
 		for _, m := range elf1 {
-			if slices.Contains(elf2, m){
+			if slices.Contains(elf2, m) {
 				anyOverlap++
 				break
 			}
@@ -108,7 +109,6 @@ func Y2022_04(input string) (interface{}, interface{}) {
 				fullyContained = false
 				break
 			}
-			//fmt.Printf("%v %v\n", elf1, elf2)
 			fullyContained = true
 		}
 		if fullyContained {
@@ -120,12 +120,71 @@ func Y2022_04(input string) (interface{}, interface{}) {
 				fullyContained = false
 				break
 			}
-			//fmt.Printf("%v %v\n",elf1,elf2)
 			fullyContained = true
 		}
 		if fullyContained {
 			totalContained++
 		}
 	}
-	return totalContained,anyOverlap
+	return totalContained, anyOverlap
+}
+func Y2022_05(input string) (interface{}, interface{}) {
+	instructionStart := 0
+	stacks9000 := make(map[int][]rune)
+	stacks9001 := make(map[int][]rune)
+	start := make([]string, 0)
+	for i, n := range strings.FieldsFunc(input, func(c rune) bool { return c == '\n' }) {
+		if strings.Contains(n, "move") {
+			instructionStart = i
+			break
+		}
+		start = append(start, n)
+	}
+	for l, r := 0, len(start)-1; l < r; l, r = l+1, r-1 {
+		start[l], start[r] = start[r], start[l]
+	}
+	for _, n := range strings.Fields(start[0]) {
+		i, _ := strconv.Atoi(n)
+		stacks9000[i] = make([]rune, 0)
+		stacks9001[i] = make([]rune, 0)
+	}
+	for i := 1; i <= len(stacks9000); i++ {
+		for j, c := range start {
+			if j == 0 {
+				continue
+			}
+			if rune(c[i*4-3]) == ' ' {
+				continue
+			}
+			stacks9000[i] = append(stacks9000[i], rune(c[i*4-3]))
+			stacks9001[i] = append(stacks9001[i], rune(c[i*4-3]))
+		}
+	}
+	for i, n := range strings.FieldsFunc(input, func(c rune) bool { return c == '\n' }) {
+		if i < instructionStart {
+			continue
+		}
+		order := strings.Fields(n)
+		amt, _ := strconv.Atoi(order[1])
+		from, _ := strconv.Atoi(order[3])
+		to, _ := strconv.Atoi(order[5])
+		for j := 0; j < amt; j++ {
+			var mv rune
+			mv, stacks9000[from] = stacks9000[from][len(stacks9000[from])-1], stacks9000[from][:len(stacks9000[from])-1]
+			stacks9000[to] = append(stacks9000[to], mv)
+		}
+		mv := make([]rune, amt)
+		short := make([]rune, len(stacks9001[from])-amt)
+		copy(mv, stacks9001[from][len(stacks9001[from])-amt:len(stacks9001[from])])
+		copy(short, stacks9001[from][:len(stacks9001[from])-amt])
+		fmt.Printf("%v\t%v\n", short, mv)
+		stacks9001[from] = short
+		stacks9001[to] = append(stacks9001[to], mv...)
+	}
+	ans9000, ans9001 := "", ""
+	for i := 1; i <= len(stacks9000); i++ {
+		ans9000 += string(stacks9000[i][len(stacks9000[i])-1])
+		ans9001 += string(stacks9001[i][len(stacks9001[i])-1])
+	}
+	return ans9000, ans9001
 }

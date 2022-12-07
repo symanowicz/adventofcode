@@ -52,6 +52,7 @@ func main() {
 		"2022 2":  {2022, 2, "2022/2", "Total Score: %v\nCorrect Total Score: %v\n", Y2022_02},
 		"2022 3":  {2022, 3, "2022/3", "Sum of Duplicates: %v\nSum of Badges: %v\n", Y2022_03},
 		"2022 4":  {2022, 4, "2022/4", "Total Fully Contained: %v\nAny Overlap: %v\n", Y2022_04},
+		"2022 5":  {2022, 5, "2022/5", "Top Crates for Cratemover 9000: %v\nTop Crates for Cratemover 9001: %v\n", Y2022_05},
 	}
 	fDay := flag.String("day", "1", "which day to solve for")
 	fYear := flag.String("year", "2015", "which year to solve for")
