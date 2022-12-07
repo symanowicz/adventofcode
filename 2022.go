@@ -188,3 +188,42 @@ func Y2022_05(input string) (interface{}, interface{}) {
 	}
 	return ans9000, ans9001
 }
+func Y2022_06(input string) (interface{}, interface{}) {
+	startPacket, startMessage := "", ""
+	totalPacket, totalMessage := 0, 0
+	for i := range input {
+		totalPacket++
+		startPacket = input[i:i+4]
+		count := make(map[rune]int)
+		for _, c := range startPacket {
+			count[c]++
+		}
+		found := true
+		for k := range count {
+			if count[k] > 1 {
+				found = false
+			}
+		}
+		if found {
+			break
+		}
+	}
+	for i := range input {
+		totalMessage++
+		startMessage = input[i:i+14]
+		count := make(map[rune]int)
+		for _, c := range startMessage {
+			count[c]++
+		}
+		found := true
+		for k := range count {
+			if count[k] > 1 {
+				found = false
+			}
+		}
+		if found {
+			break
+		}
+	}
+	return totalPacket+3,totalMessage+13
+}
