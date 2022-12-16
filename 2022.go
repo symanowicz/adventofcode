@@ -288,9 +288,10 @@ func Y2022_07(input string) (interface{}, interface{}) {
 			continue
 		}
 	}
-	// I have this pattern of "crawl tree, do thing", repeated 4 times
-	// it should factor out to it's own function, but I don't know
-	// if the function's logic would be more convoluted than the local state.
+	hundredKtotal := 0
+	spaceRequired := 30000000 - (70000000 - root.size)
+	deleteSize := root.size + 1
+	var findAnswers func(d *dir)
 	var calcDirSize func(d *dir)
 	calcDirSize = func(d *dir) {
 		if len(d.childs) != 0 {
@@ -303,48 +304,20 @@ func Y2022_07(input string) (interface{}, interface{}) {
 			d.size += d.files[i].size
 		}
 	}
-	calcDirSize(&root)
-	hundredKtotal := 0
-	var findhundredKtotal func(d *dir)
-	findhundredKtotal = func(d *dir) {
+	findAnswers = func(d *dir) {
 		if len(d.childs) != 0 {
 			for i := range d.childs {
-				findhundredKtotal(d.childs[i])
+				findAnswers(d.childs[i])
 			}
 		}
 		if d.size <= 100000 {
 			hundredKtotal += d.size
 		}
-	}
-	findhundredKtotal(&root)
-	spaceRequired := 30000000 - (70000000 - root.size)
-	deleteSize := root.size + 1
-	var findDeleteSize func(d *dir)
-	findDeleteSize = func(d *dir) {
-		if d.size > spaceRequired {
-			if len(d.childs) != 0 {
-				for i := range d.childs {
-					findDeleteSize(d.childs[i])
-				}
-			}
-			if d.size < deleteSize {
-				deleteSize = d.size
-			}
+		if d.size > spaceRequired && d.size < deleteSize {
+			deleteSize = d.size
 		}
 	}
-	findDeleteSize(&root)
-	// var printDir func(d *dir)
-	// printDir = func(d *dir) {
-	// 	fmt.Printf("%s--- %v ----\t%d\n", strings.Repeat("  ", d.depth),d.name,d.size)
-	// 	if len(d.childs) != 0 {
-	// 		for i := range d.childs {
-	// 			printDir(d.childs[i])
-	// 		}
-	// 	}
-	// 	for i := range d.files {
-	// 		fmt.Printf("%s%v %v\n", strings.Repeat("  ",d.depth+1),d.files[i].name, d.files[i].size)
-	// 	}
-	// }
-	// printDir(&root)
+	calcDirSize(&root)
+	findAnswers(&root)
 	return hundredKtotal, deleteSize
 }
