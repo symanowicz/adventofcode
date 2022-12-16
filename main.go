@@ -7,13 +7,13 @@ import (
 )
 
 type puzzle struct {
-	year, day     int
-	output string
-	solution      func(string) (interface{}, interface{})
+	year, day int
+	output    string
+	solution  func(string) (interface{}, interface{})
 }
 
 func (p puzzle) solve() string {
-	data, err := os.ReadFile(fmt.Sprintf("%d/%d",p.year,p.day))
+	data, err := os.ReadFile(fmt.Sprintf("%d/%d", p.year, p.day))
 	check(err)
 	a, b := p.solution(string(data))
 	return fmt.Sprintf("*** %d *** [%d]\n"+p.output, p.year, p.day, a, b)
@@ -53,18 +53,19 @@ func main() {
 		"2022 3":  {2022, 3, "Sum of Duplicates: %v\nSum of Badges: %v\n", Y2022_03},
 		"2022 4":  {2022, 4, "Total Fully Contained: %v\nAny Overlap: %v\n", Y2022_04},
 		"2022 5":  {2022, 5, "Top Crates for Cratemover 9000: %v\nTop Crates for Cratemover 9001: %v\n", Y2022_05},
-		"2022 6":  {2022, 6, "undef: %v\nundef: %v\n", Y2022_06},
+		"2022 6":  {2022, 6, "Characters to start-of-packet: %v\nCharacters to start-of-message: %v\n", Y2022_06},
+		"2022 7":  {2022, 7, "Sum of Directories under 100K: %v\nSmallest directory to make room for update: %v\n", Y2022_07},
 	}
 	fDay := flag.String("day", "1", "which day to solve for")
 	fYear := flag.String("year", "2015", "which year to solve for")
 	fAll := flag.Bool("all", false, "output all solutions, overrides -day and -year")
 	flag.Parse()
 	if *fAll {
-		years := []int{2015,2016,2017,2018,2019,2020,2021,2022}
-		days := []int{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25}
+		years := []int{2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022}
+		days := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25}
 		for i := range years {
 			for j := range days {
-				p, prs := puzz[fmt.Sprintf("%d %d",years[i],days[j])]
+				p, prs := puzz[fmt.Sprintf("%d %d", years[i], days[j])]
 				if prs {
 					fmt.Println(p.solve())
 				}

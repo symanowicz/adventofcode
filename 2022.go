@@ -193,7 +193,7 @@ func Y2022_06(input string) (interface{}, interface{}) {
 	totalPacket, totalMessage := 0, 0
 	for i := range input {
 		totalPacket++
-		startPacket = input[i:i+4]
+		startPacket = input[i : i+4]
 		count := make(map[rune]int)
 		for _, c := range startPacket {
 			count[c]++
@@ -210,7 +210,7 @@ func Y2022_06(input string) (interface{}, interface{}) {
 	}
 	for i := range input {
 		totalMessage++
-		startMessage = input[i:i+14]
+		startMessage = input[i : i+14]
 		count := make(map[rune]int)
 		for _, c := range startMessage {
 			count[c]++
@@ -225,5 +225,126 @@ func Y2022_06(input string) (interface{}, interface{}) {
 			break
 		}
 	}
-	return totalPacket+3,totalMessage+13
+	return totalPacket + 3, totalMessage + 13
+}
+func Y2022_07(input string) (interface{}, interface{}) {
+	type file struct {
+		name string
+		size int
+	}
+	type dir struct {
+		name        string
+		parent      *dir
+		depth, size int
+		childs      []*dir
+		files       []*file
+	}
+	root := dir{"/", nil, 0, 0, make([]*dir, 0), make([]*file, 0)}
+	currentDir := &root
+	slicedInput := strings.FieldsFunc(input, func(c rune) bool { return c == '\n' })
+	for i, n := range slicedInput {
+		if i == 0 {
+			continue
+		}
+		data := strings.Fields(n)
+		if data[0] == "$" {
+			if data[1] == "cd" {
+				//change directory
+				if data[2] == ".." {
+					//go up
+					currentDir = currentDir.parent
+				} else {
+					//go down
+					for j, m := range currentDir.childs {
+						if m.name == data[2] {
+							currentDir = currentDir.childs[j]
+						}
+					}
+				}
+			} else {
+				//process file list
+				currentLine := i
+				for {
+					currentLine++
+					if currentLine == len(slicedInput) {
+						break
+					}
+					if strings.Fields(slicedInput[currentLine])[0] == "$" {
+						break
+					}
+				}
+				for _, m := range slicedInput[i+1 : currentLine] {
+					if strings.Fields(m)[0] == "dir" {
+						//add directory
+						currentDir.childs = append(currentDir.childs, &dir{strings.Fields(m)[1], currentDir, currentDir.depth + 1, 0, make([]*dir, 0), make([]*file, 0)})
+					} else {
+						//add file
+						size, _ := strconv.Atoi(strings.Fields(m)[0])
+						currentDir.files = append(currentDir.files, &file{strings.Fields(m)[1], size})
+					}
+				}
+			}
+		} else {
+			continue
+		}
+	}
+	// I have this pattern of "crawl tree, do thing", repeated 4 times
+	// it should factor out to it's own function, but I don't know
+	// if the function's logic would be more convoluted than the local state.
+	var calcDirSize func(d *dir)
+	calcDirSize = func(d *dir) {
+		if len(d.childs) != 0 {
+			for i := range d.childs {
+				calcDirSize(d.childs[i])
+				d.size += d.childs[i].size
+			}
+		}
+		for i := range d.files {
+			d.size += d.files[i].size
+		}
+	}
+	calcDirSize(&root)
+	hundredKtotal := 0
+	var findhundredKtotal func(d *dir)
+	findhundredKtotal = func(d *dir) {
+		if len(d.childs) != 0 {
+			for i := range d.childs {
+				findhundredKtotal(d.childs[i])
+			}
+		}
+		if d.size <= 100000 {
+			hundredKtotal += d.size
+		}
+	}
+	findhundredKtotal(&root)
+	spaceRequired := 30000000 - (70000000 - root.size)
+	deleteSize := root.size + 1
+	var findDeleteSize func(d *dir)
+	findDeleteSize = func(d *dir) {
+		if d.size > spaceRequired {
+			if len(d.childs) != 0 {
+				for i := range d.childs {
+					findDeleteSize(d.childs[i])
+				}
+			}
+			if d.size < deleteSize {
+				deleteSize = d.size
+			}
+		}
+	}
+	findDeleteSize(&root)
+	// var printDir func(d *dir)
+	// printDir = func(d *dir) {
+	// 	fmt.Printf("%s--- %v ----\t%d\n", strings.Repeat("  ", d.depth),d.name,d.size)
+	// 	if len(d.childs) != 0 {
+	// 		for i := range d.childs {
+	// 			printDir(d.childs[i])
+	// 		}
+	// 	}
+	// 	for i := range d.files {
+	// 		fmt.Printf("%s%v %v\n", strings.Repeat("  ",d.depth+1),d.files[i].name, d.files[i].size)
+	// 	}
+	// }
+	// printDir(&root)
+	return hundredKtotal, deleteSize
 }
