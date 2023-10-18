@@ -1,8 +1,12 @@
 package main
 
 import (
+	"errors"
 	"flag"
 	"fmt"
+	"io"
+	"log"
+	"net/http"
 	"os"
 )
 
@@ -13,6 +17,26 @@ type puzzle struct {
 }
 
 func (p puzzle) solve() string {
+	if _, e := os.Stat(fmt.Sprintf("%d", p.year)); errors.Is(e, os.ErrNotExist) {
+		e = os.Mkdir(fmt.Sprintf("%d", p.year), 0770)
+		check(e)
+	}
+	if _, e := os.Stat(fmt.Sprintf("%d/%d", p.year, p.day)); errors.Is(e, os.ErrNotExist) {
+		sess := os.Getenv("AOC_SESSION")
+		if len(sess) == 0 {
+			log.Fatal("no input file found for this puzzle and no session key provided to fetch input...exiting")
+		}
+		client := &http.Client{}
+		req, err := http.NewRequest("GET", fmt.Sprintf("https://adventofcode.com/%d/day/%d/input", p.year, p.day), nil)
+		check(err)
+		req.AddCookie(&http.Cookie{Name: "session", Value: sess})
+		resp, err := client.Do(req)
+		check(err)
+		s, err := io.ReadAll(resp.Body)
+		check(err)
+		err = os.WriteFile(fmt.Sprintf("%d/%d", p.year, p.day), s, 0660)
+		check(err)
+	}
 	data, err := os.ReadFile(fmt.Sprintf("%d/%d", p.year, p.day))
 	check(err)
 	a, b := p.solution(string(data))
@@ -21,7 +45,7 @@ func (p puzzle) solve() string {
 
 func check(e error) {
 	if e != nil {
-		panic(e)
+		log.Fatal(e)
 	}
 }
 
