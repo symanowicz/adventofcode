@@ -612,3 +612,72 @@ func Y2015_14(input string) (interface{}, interface{}) {
 	}
 	return win, pointswin
 }
+func Y2015_15(input string) (interface{}, interface{}) {
+	ingredients := make(map[string][]int)
+	for _, c := range strings.FieldsFunc(input, func(c rune) bool { return c == '\n' }) {
+		m := strings.Split(c, ":")
+		n := strings.Split(m[1], ",")
+		nums := make([]int, 0)
+		for _, o := range n {
+			p := strings.Split(o, " ")
+			a, _ := strconv.Atoi(p[2])
+			nums = append(nums, a)
+		}
+		ingredients[m[0]] = nums
+	}
+	cookies := make([][]int, 0)
+	litecookies := make([][]int, 0)
+	for z := 1; z < 97; z++ {
+		for y := 1; y < 97; y++ {
+			for x := 1; x < 97; x++ {
+				for w := 1; w < 97; w++ {
+					if w+x+y+z == 100 {
+						litecookies = append(litecookies, []int{w, x, y, z})
+						if w+x < y {
+							if x*5 > z {
+								if z*5 > y {
+									cookies = append(cookies, []int{w, x, y, z})
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	highScore, calScore := 0, 0
+	for i := range cookies {
+		cap := cookies[i][0]*ingredients["Sprinkles"][0] + cookies[i][1]*ingredients["Butterscotch"][0] + cookies[i][2]*ingredients["Chocolate"][0] + cookies[i][3]*ingredients["Candy"][0]
+		dur := cookies[i][0]*ingredients["Sprinkles"][1] + cookies[i][1]*ingredients["Butterscotch"][1] + cookies[i][2]*ingredients["Chocolate"][1] + cookies[i][3]*ingredients["Candy"][1]
+		fla := cookies[i][0]*ingredients["Sprinkles"][2] + cookies[i][1]*ingredients["Butterscotch"][2] + cookies[i][2]*ingredients["Chocolate"][2] + cookies[i][3]*ingredients["Candy"][2]
+		tex := cookies[i][0]*ingredients["Sprinkles"][3] + cookies[i][1]*ingredients["Butterscotch"][3] + cookies[i][2]*ingredients["Chocolate"][3] + cookies[i][3]*ingredients["Candy"][3]
+		score := cap * dur * fla * tex
+		if score > highScore {
+			highScore = score
+		}
+	}
+	for i := range litecookies {
+		cap := litecookies[i][0]*ingredients["Sprinkles"][0] + litecookies[i][1]*ingredients["Butterscotch"][0] + litecookies[i][2]*ingredients["Chocolate"][0] + litecookies[i][3]*ingredients["Candy"][0]
+		dur := litecookies[i][0]*ingredients["Sprinkles"][1] + litecookies[i][1]*ingredients["Butterscotch"][1] + litecookies[i][2]*ingredients["Chocolate"][1] + litecookies[i][3]*ingredients["Candy"][1]
+		fla := litecookies[i][0]*ingredients["Sprinkles"][2] + litecookies[i][1]*ingredients["Butterscotch"][2] + litecookies[i][2]*ingredients["Chocolate"][2] + litecookies[i][3]*ingredients["Candy"][2]
+		tex := litecookies[i][0]*ingredients["Sprinkles"][3] + litecookies[i][1]*ingredients["Butterscotch"][3] + litecookies[i][2]*ingredients["Chocolate"][3] + litecookies[i][3]*ingredients["Candy"][3]
+		cal := litecookies[i][0]*ingredients["Sprinkles"][4] + litecookies[i][1]*ingredients["Butterscotch"][4] + litecookies[i][2]*ingredients["Chocolate"][4] + litecookies[i][3]*ingredients["Candy"][4]
+		if cap < 0 {
+			cap = 0
+		}
+		if dur < 0 {
+			dur = 0
+		}
+		if fla < 0 {
+			fla = 0
+		}
+		if tex < 0 {
+			tex = 0
+		}
+		score := cap * dur * fla * tex
+		if score > calScore && cal == 500 {
+			calScore = score
+		}
+	}
+	return highScore, calScore
+}
