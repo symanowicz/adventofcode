@@ -321,3 +321,77 @@ func Y2022_07(input string) (interface{}, interface{}) {
 	findAnswers(&root)
 	return hundredKtotal, deleteSize
 }
+func Y2022_08(input string) (interface{}, interface{}) {
+	type tree struct {
+		height  int
+		visible bool
+		score   int
+		north   []int
+		south   []int
+		east    []int
+		west    []int
+	}
+	trees := make([]tree, 0)
+	layout := [][]int{}
+	for _, c := range strings.FieldsFunc(input, func(c rune) bool { return c == '\n' }) {
+		line := make([]int, 0)
+		for _, n := range c {
+			a, _ := strconv.Atoi(string(n))
+			line = append(line, a)
+		}
+		layout = append(layout, line)
+	}
+	for i := range layout {
+		for j := range layout[i] {
+			z := tree{layout[i][j], false, 0, make([]int, 0), make([]int, 0), make([]int, 0), make([]int, 0)}
+			n, s, e, w := true, true, true, true
+			for k := i; k > 0; {
+				k--
+				z.north = append(z.north, layout[k][j])
+				if z.height <= layout[k][j] {
+					n = false
+					break
+				}
+			}
+			for k := i; k < 98; {
+				k++
+				z.south = append(z.south, layout[k][j])
+				if z.height <= layout[k][j] {
+					s = false
+					break
+				}
+			}
+			for k := j; k > 0; {
+				k--
+				z.west = append(z.west, layout[i][k])
+				if z.height <= layout[i][k] {
+					w = false
+					break
+				}
+			}
+			for k := j; k < 98; {
+				k++
+				z.east = append(z.east, layout[i][k])
+				if z.height <= layout[i][k] {
+					e = false
+					break
+				}
+			}
+			if n || s || w || e {
+				z.visible = true
+			}
+			z.score = len(z.north) * len(z.south) * len(z.east) * len(z.west)
+			trees = append(trees, z)
+		}
+	}
+	vis, highScore := 0, 0
+	for i := range trees {
+		if trees[i].visible {
+			vis++
+		}
+		if trees[i].score > highScore {
+			highScore = trees[i].score
+		}
+	}
+	return vis, highScore
+}
