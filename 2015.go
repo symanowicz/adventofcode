@@ -681,3 +681,51 @@ func Y2015_15(input string) (interface{}, interface{}) {
 	}
 	return highScore, calScore
 }
+func Y2015_16(input string) (interface{}, interface{}) {
+	sues := make([]map[string]int, 1)
+	sues[0] = map[string]int{"children": 3, "cats": 7, "samoyeds": 2, "pomeranians": 3, "akitas": 0, "vizslas": 0, "goldfish": 5, "trees": 5, "cars": 2, "perfumes": 1}
+	for _, c := range strings.FieldsFunc(input, func(c rune) bool { return c == '\n' }) {
+		thisSue := make(map[string]int)
+		n := strings.Split(strings.Join(strings.Split(c, ":")[1:], ""), ",")
+		for i := range n {
+			keyval := strings.Split(strings.Trim(n[i], " "), " ")
+			a, _ := strconv.Atoi(keyval[1])
+			thisSue[keyval[0]] = a
+		}
+		sues = append(sues, thisSue)
+	}
+	gift, realGift := 0, 0
+	for i, n := range sues {
+		if i == 0 {
+			continue
+		}
+		match, realMatch := 0, 0
+		for k, v := range sues[0] {
+			m, prs := n[k]
+			if prs && m == v {
+				match++
+				if match > 2 {
+					gift = i
+				}
+			}
+			switch k {
+			case "cats", "trees":
+				if prs && v <= m {
+					realMatch++
+				}
+			case "pomeranians", "goldfish":
+				if prs && v >= m {
+					realMatch++
+				}
+			default:
+				if prs && v == m {
+					realMatch++
+				}
+			}
+			if realMatch > 2 && realGift == 0 {
+				realGift = i
+			}
+		}
+	}
+	return gift, realGift
+}
