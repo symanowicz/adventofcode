@@ -4,6 +4,7 @@ import (
 	"crypto/md5"
 	"encoding/json"
 	"fmt"
+	"gonum.org/v1/gonum/stat/combin"
 	"regexp"
 	"sort"
 	"strconv"
@@ -728,4 +729,41 @@ func Y2015_16(input string) (interface{}, interface{}) {
 		}
 	}
 	return gift, realGift
+}
+func Y2015_17(input string) (interface{}, interface{}) {
+	buckets := make([]int, 0)
+	eggnog := 150
+	combos := make([][]int, 0)
+	for _, n := range strings.Fields(input) {
+		a, _ := strconv.Atoi(n)
+		buckets = append(buckets, a)
+	}
+	for i := 1; i < len(buckets); i++ {
+		for _, n := range combin.Combinations(len(buckets), i) {
+			fill := make([]int, len(n))
+			for j, m := range n {
+				fill[j] = buckets[m]
+			}
+			sum := 0
+			for i := range fill {
+				sum += fill[i]
+			}
+			if sum == eggnog {
+				combos = append(combos, fill)
+			}
+		}
+	}
+	fewest := make([][]int, 0)
+	shortest := 99
+	for i := range combos {
+		if len(combos[i]) < shortest {
+			shortest = len(combos[i])
+		}
+	}
+	for i := range combos {
+		if len(combos[i]) == shortest {
+			fewest = append(fewest, combos[i])
+		}
+	}
+	return len(combos), len(fewest)
 }
