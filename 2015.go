@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"gonum.org/v1/gonum/stat/combin"
 	"regexp"
+	"slices"
 	"sort"
 	"strconv"
 	"strings"
@@ -766,4 +767,174 @@ func Y2015_17(input string) (interface{}, interface{}) {
 		}
 	}
 	return len(combos), len(fewest)
+}
+func Y2015_18(input string) (interface{}, interface{}) {
+	type light struct {
+		me, n, s, e, w, nw, ne, sw, se bool
+	}
+	updateNeighbors := func(field []light) {
+		for i := range field {
+			switch {
+			//corner cases
+			case i == 0:
+				field[i].e = field[i+1].me
+				field[i].s = field[i+100].me
+				field[i].se = field[i+101].me
+			case i == 99:
+				field[i].w = field[i-1].me
+				field[i].s = field[i+100].me
+				field[i].sw = field[i+99].me
+			case i == 9900:
+				field[i].n = field[i-100].me
+				field[i].e = field[i+1].me
+				field[i].ne = field[i-99].me
+			case i == 9999:
+				field[i].n = field[i-100].me
+				field[i].w = field[i-1].me
+				field[i].nw = field[i-101].me
+				//edge cases
+			case i < 100:
+				field[i].e = field[i+1].me
+				field[i].s = field[i+100].me
+				field[i].se = field[i+101].me
+				field[i].w = field[i-1].me
+				field[i].sw = field[i+99].me
+			case i > 9900:
+				field[i].e = field[i+1].me
+				field[i].w = field[i-1].me
+				field[i].n = field[i-100].me
+				field[i].ne = field[i-99].me
+				field[i].nw = field[i-101].me
+			case i%100 == 0:
+				field[i].e = field[i+1].me
+				field[i].s = field[i+100].me
+				field[i].se = field[i+101].me
+				field[i].n = field[i-100].me
+				field[i].ne = field[i-99].me
+			case i%100 == 99:
+				field[i].s = field[i+100].me
+				field[i].sw = field[i+99].me
+				field[i].w = field[i-1].me
+				field[i].n = field[i-100].me
+				field[i].nw = field[i-101].me
+				//everything else
+			default:
+				field[i].e = field[i+1].me
+				field[i].s = field[i+100].me
+				field[i].se = field[i+101].me
+				field[i].w = field[i-1].me
+				field[i].sw = field[i+99].me
+				field[i].n = field[i-100].me
+				field[i].ne = field[i-99].me
+				field[i].nw = field[i-101].me
+			}
+			//fmt.Printf("%d ", i)
+		}
+	}
+	step := func(f, f2 []light) {
+		for i := range f {
+			c, c2 := 0, 0
+			if f[i].n {
+				c++
+			}
+			if f[i].ne {
+				c++
+			}
+			if f[i].nw {
+				c++
+			}
+			if f[i].s {
+				c++
+			}
+			if f[i].sw {
+				c++
+			}
+			if f[i].se {
+				c++
+			}
+			if f[i].w {
+				c++
+			}
+			if f[i].e {
+				c++
+			}
+			if f[i].me {
+				if c != 2 && c != 3 {
+					f[i].me = false
+				}
+			} else {
+				if c == 3 {
+					f[i].me = true
+				}
+			}
+			if f2[i].n {
+				c2++
+			}
+			if f2[i].ne {
+				c2++
+			}
+			if f2[i].nw {
+				c2++
+			}
+			if f2[i].s {
+				c2++
+			}
+			if f2[i].sw {
+				c2++
+			}
+			if f2[i].se {
+				c2++
+			}
+			if f2[i].w {
+				c2++
+			}
+			if f2[i].e {
+				c2++
+			}
+			if f2[i].me {
+				if c2 != 2 && c2 != 3 {
+					f2[i].me = false
+				}
+			} else {
+				if c2 == 3 {
+					f2[i].me = true
+				}
+			}
+			if i == 0 || i == 99 || i == 9900 || i == 9999 {
+				f2[i].me = true
+			}
+		}
+		updateNeighbors(f)
+		updateNeighbors(f2)
+	}
+	field := []light{}
+	for _, c := range input {
+		switch rune(c) {
+		case '#':
+			field = append(field, light{true, false, false, false, false, false, false, false, false})
+		case '.':
+			field = append(field, light{false, false, false, false, false, false, false, false, false})
+		}
+	}
+	field2 := slices.Clone(field)
+	field2[0].me = true
+	field2[99].me = true
+	field2[9900].me = true
+	field2[9999].me = true
+	updateNeighbors(field)
+	updateNeighbors(field2)
+
+	for i := 0; i < 100; i++ {
+		step(field, field2)
+	}
+	on, on2 := 0, 0
+	for i := range field {
+		if field[i].me {
+			on++
+		}
+		if field2[i].me {
+			on2++
+		}
+	}
+	return on, on2
 }

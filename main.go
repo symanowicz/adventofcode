@@ -68,6 +68,7 @@ func main() {
 		"2015 15": {2015, 15, "Highest Scoring Cookie: %v\nHighest Scoring Cookie exactly 500 calories: %v\n", Y2015_15},
 		"2015 16": {2015, 16, "Aunt Sue: %v\nReal Aunt Sue: %v\n", Y2015_16},
 		"2015 17": {2015, 17, "Possible Combinations: %v\nPossible Combinations with fewest containers: %v\n", Y2015_17},
+		"2015 18": {2015, 18, "100 steps: %v\n100 steps with stuck corners: %v\n", Y2015_18},
 		"2018 1":  {2018, 1, "Resulting Frequency: %v\nFirst Repeated Frequency: %v\n", Y2018_01},
 		"2018 2":  {2018, 2, "Checksum: %v\nCommon Letters: %v\n", Y2018_02},
 		"2018 3":  {2018, 3, "Square Inches Contested: %v\nNon-Overlapping Claim ID: %v\n", Y2018_03},
