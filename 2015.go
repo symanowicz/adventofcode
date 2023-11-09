@@ -828,7 +828,6 @@ func Y2015_18(input string) (interface{}, interface{}) {
 				field[i].ne = field[i-99].me
 				field[i].nw = field[i-101].me
 			}
-			//fmt.Printf("%d ", i)
 		}
 	}
 	step := func(f, f2 []light) {
@@ -937,4 +936,37 @@ func Y2015_18(input string) (interface{}, interface{}) {
 		}
 	}
 	return on, on2
+}
+func Y2015_19(input string) (interface{}, interface{}) {
+	transformations := [][]string{}
+	calibrate := ""
+	molecules := []string{}
+	for _, c := range strings.FieldsFunc(input, func(c rune) bool { return c == '\n' }) {
+		if c == "" {
+			continue
+		}
+		if strings.Contains(c, "=>") {
+			transformations = append(transformations, strings.Split(c, " => "))
+		} else {
+			calibrate = c
+		}
+	}
+	for i := range transformations {
+		r := regexp.MustCompile(transformations[i][0])
+		for _, c := range r.FindAllStringIndex(calibrate, -1) {
+			pre := calibrate[:c[0]]
+			post := calibrate[c[1]:]
+			molecules = append(molecules, pre+transformations[i][1]+post)
+		}
+	}
+	score := 0
+	for m := calibrate; m != "e"; {
+		for _, c := range transformations {
+			r := regexp.MustCompile(c[1])
+			score += len(r.FindAllString(m, -1))
+			m = r.ReplaceAllLiteralString(m, c[0])
+		}
+	}
+	slices.Sort(molecules)
+	return len(slices.Compact(molecules)), score
 }
