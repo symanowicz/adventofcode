@@ -85,6 +85,7 @@ func main() {
 		"2022 6":  {2022, 6, "Characters to start-of-packet: %v\nCharacters to start-of-message: %v\n", Y2022_06},
 		"2022 7":  {2022, 7, "Sum of Directories under 100K: %v\nSmallest directory to make room for update: %v\n", Y2022_07},
 		"2022 8":  {2022, 8, "Visible Trees: %v\nHighest scenic score: %v\n", Y2022_08},
+		"2023 1":  {2023, 1, "Calibration Sum: %v\nReal Calibration Sum: %v\n", Y2023_01},
 	}
 	fDay := flag.String("day", "1", "which day to solve for")
 	fYear := flag.String("year", "2015", "which year to solve for")
