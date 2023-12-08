@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	//"fmt"
 	"regexp"
 	"slices"
 	"strconv"
@@ -76,9 +76,56 @@ func Y2023_01(input string) (interface{}, interface{}) {
 		}
 		a, _ := strconv.Atoi(m[0] + m[len(m)-1])
 		b, _ := strconv.Atoi(o[0] + o[len(o)-1])
-		fmt.Printf("%v\t%v\n", n,o)
 		sum += a
 		sum2 += b
+	}
+	return sum,sum2
+}
+
+func Y2023_02(input string) (interface{}, interface{}) {
+	sum, sum2 := 0, 0
+	for _, n := range strings.FieldsFunc(input, func(c rune) bool { return c == '\n' }) {
+		m := strings.Split(n, ":")
+		idx, _ := strconv.Atoi(strings.Split(m[0], " ")[1])
+		//fmt.Printf("%d:\n", idx)
+		games := strings.Split(strings.Trim(m[1], " "), "; ")
+		counts := make([]map[string]int, 0)
+		for _, o := range games {
+			p := strings.Split(o, ", ")
+			//fmt.Printf("\t%v\n", p)
+			num := make(map[string]int, 0)
+			for _, q := range p {
+				r := strings.Split(q," ")
+				//fmt.Printf("\t\t%v\n",r)
+				s, _ := strconv.Atoi(r[0])
+				num[r[1]] = s
+			}
+			counts = append(counts, num)
+		}
+		//fmt.Printf("%3d: %v\n",idx,counts)
+		possible := true
+		max := make(map[string]int)
+		max["red"] = 0
+		max["green"] = 0
+		max["blue"] = 0
+		for _, t := range counts {
+			if t["red"] > 12 || t["green"] > 13 || t["blue"] > 14 {
+				possible = false
+			}
+			if t["red"] > max["red"] {
+				max["red"] = t["red"]
+			}
+			if t["green"] > max["green"] {
+				max["green"] = t["green"]
+			}
+			if t["blue"] > max["blue"] {
+				max["blue"] = t["blue"]
+			}
+		}
+		if possible {
+			sum += idx
+		}
+		sum2 += max["red"] * max["green"] * max["blue"]
 	}
 	return sum,sum2
 }
